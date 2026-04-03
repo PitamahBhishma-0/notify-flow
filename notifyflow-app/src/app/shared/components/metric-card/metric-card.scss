@@ -1,0 +1,30 @@
+:host {
+  display: block; /* Ensures the card takes up grid space */
+}
+
+.metric {
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  padding: 12px 14px;
+  height: 100%;
+
+  &-label {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-bottom: 6px;
+  }
+
+  &-value {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  &-sub {
+    font-size: 11px;
+    margin-top: 3px;
+    
+    &.up { color: #3B6D11; }
+    &.down { color: #A32D2D; }
+  }
+}

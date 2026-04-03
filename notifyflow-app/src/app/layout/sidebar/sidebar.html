@@ -1,0 +1,10 @@
+<div class="sidebar-logo">NotifyFlow<span>v1.0.0</span></div>
+
+@for (item of navItems; track item.path) {
+  <a [routerLink]="item.path" 
+     routerLinkActive="active" 
+     class="nav-item">
+    <span class="material-icons">{{ item.icon }}</span>
+    {{ item.label }}
+  </a>
+}

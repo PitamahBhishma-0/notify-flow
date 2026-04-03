@@ -1,0 +1,39 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <div class="login-header">
+      <div class="logo">NotifyFlow<span>v1.0.0</span></div>
+      <h1>Welcome back</h1>
+      <p>Log in to manage your notifications</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Email address</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="name@company.com">
+        <mat-icon matSuffix>email</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'">
+        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+      @if (errorMessage()) {
+    <div class="error-banner">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <button mat-flat-button color="primary" type="submit" 
+          [disabled]="loginForm.invalid || isLoading()">
+    {{ isLoading() ? 'Authenticating...' : 'Sign in' }}
+  </button>
+    </form>
+
+    <div class="login-footer">
+      <a href="#">Forgot password?</a>
+    </div>
+  </mat-card>
+</div>

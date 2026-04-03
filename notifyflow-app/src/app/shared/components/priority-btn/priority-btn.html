@@ -1,0 +1,12 @@
+<div class="priority-label">Priority</div>
+    <mat-button-toggle-group 
+      [value]="selectedPriority()" 
+      (change)="select($event.value)"
+      name="priority" 
+      aria-label="Notification Priority">
+      
+      <mat-button-toggle value="HIGH" class="btn-high">High</mat-button-toggle>
+      <mat-button-toggle value="MEDIUM" class="btn-med">Medium</mat-button-toggle>
+      <mat-button-toggle value="LOW" class="btn-low">Low</mat-button-toggle>
+      
+    </mat-button-toggle-group>

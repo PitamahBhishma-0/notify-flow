@@ -1,0 +1,35 @@
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+.bar-label {
+  width: 80px;
+  color: var(--color-text-secondary);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--color-background-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out; /* Smooth growth animation */
+}
+
+.bar-count {
+  width: 40px;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  text-align: left;
+}

@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  
+  &.active {
+    background: var(--brand-light);
+    color: var(--brand-primary);
+    border-right: 3px solid var(--brand-primary);
+  }
+}

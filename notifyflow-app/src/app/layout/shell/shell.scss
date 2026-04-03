@@ -1,0 +1,28 @@
+.shell-container {
+  display: flex;             /* This puts Sidebar and Main-Layout side-by-side */
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;          /* Prevents the whole page from scrolling */
+  background-color: var(--color-background-primary);
+}
+
+app-sidebar {
+  width: 240px;              /* Fixed width for your menu */
+  flex-shrink: 0;            /* Don't let the sidebar get squished */
+  border-right: 1px solid var(--color-border-tertiary);
+  background-color: var(--color-background-secondary);
+}
+
+.main-layout {
+  flex: 1;                   /* Take up all remaining horizontal space */
+  display: flex;
+  flex-direction: column;    /* Stack Topbar and Content vertically */
+  overflow: hidden;
+}
+
+.content-area {
+  flex: 1;                   /* Take up remaining vertical space */
+  padding: 24px;
+  overflow-y: auto;          /* Only the content area should scroll! */
+  background-color: #fafafa; /* Slight gray background to make white cards pop */
+}

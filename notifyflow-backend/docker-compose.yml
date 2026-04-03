@@ -1,0 +1,109 @@
+version: '3.9'
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: notifyflow-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: notifyflow
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+
+  activemq:
+    image: apache/activemq-classic:5.18.3
+    container_name: notifyflow-activemq
+    ports:
+      - "61616:61616"   # broker
+      - "8161:8161"     # admin console
+    environment:
+      ACTIVEMQ_ADMIN_LOGIN: admin
+      ACTIVEMQ_ADMIN_PASSWORD: admin
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8161"]
+      interval: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: notifyflow-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: notifyflow-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      NOTIFICATION_SERVICE_URL: http://notification-service:8081
+      USER_SERVICE_URL: http://user-service:8082
+      DELIVERY_SERVICE_URL: http://delivery-service:8083
+      JWT_SECRET: notifyflow-super-secret-key-change-in-prod-min-32chars
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  notification-service:
+    build: ./notification-service
+    container_name: notifyflow-notification
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/notifyflow_notifications?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      DB_USER: root
+      DB_PASS: root
+      ACTIVEMQ_URL: tcp://activemq:61616
+    depends_on:
+      mysql:
+        condition: service_healthy
+      activemq:
+        condition: service_healthy
+
+  user-service:
+    build: ./user-service
+    container_name: notifyflow-user
+    ports:
+      - "8082:8082"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/notifyflow_users?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      DB_USER: root
+      DB_PASS: root
+      JWT_SECRET: notifyflow-super-secret-key-change-in-prod-min-32chars
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  delivery-service:
+    build: ./delivery-service
+    container_name: notifyflow-delivery
+    ports:
+      - "8083:8083"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/notifyflow_delivery?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      DB_USER: root
+      DB_PASS: root
+      ACTIVEMQ_URL: tcp://activemq:61616
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+      activemq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  mysql-data:

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notifyflow-config
+  namespace: notifyflow
+data:
+  ACTIVEMQ_URL: "tcp://activemq-service:61616"
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  NOTIFICATION_SERVICE_URL: "http://notification-service:8081"
+  USER_SERVICE_URL: "http://user-service:8082"
+  DELIVERY_SERVICE_URL: "http://delivery-service:8083"

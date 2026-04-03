@@ -1,0 +1,10 @@
+<div class="bar-row">
+      <div class="bar-label">{{ label() }}</div>
+      <div class="bar-track">
+        <div class="bar-fill" 
+             [style.width.%]="percentage()" 
+             [style.background-color]="color()">
+        </div>
+      </div>
+      <div class="bar-count">{{ value() }}</div>
+    </div>

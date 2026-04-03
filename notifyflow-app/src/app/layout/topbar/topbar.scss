@@ -1,0 +1,44 @@
+.topbar {
+  display: flex;
+  justify-content: space-between; /* Pushes Title Left and Actions Right */
+  align-items: center;            /* Centers everything perfectly on the horizontal axis */
+  padding: 0 24px;
+  height: 64px;
+  border-bottom: 1px solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+  box-sizing: border-box;
+}
+
+.title-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;            /* This is the key! Vertically aligns status and button */
+  gap: 16px;                      /* Space between the API pill and the User icon */
+}
+
+.api-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--color-background-secondary);
+  border-radius: 100px;
+  white-space: nowrap;            /* Prevents text from wrapping to a second line */
+  
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+  }
+}
+
+.user-btn {
+  /* Material icon buttons sometimes have extra padding, 
+     align-items: center in the parent handles this. */
+}

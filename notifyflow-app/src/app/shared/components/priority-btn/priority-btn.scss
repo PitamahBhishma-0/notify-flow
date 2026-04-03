@@ -1,0 +1,25 @@
+.priority-label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+mat-button-toggle-group {
+  width: 100%;
+  border: none !important;
+  gap: 8px;
+}
+
+mat-button-toggle {
+  flex: 1;
+  border: 0.5px solid var(--color-border-secondary) !important;
+  border-radius: var(--border-radius-md) !important;
+  background: var(--color-background-primary);
+  
+  // Custom states matching your design
+  &.mat-button-toggle-checked {
+    &.btn-high { background: #FAECE7; border-color: #D85A30 !important; color: #712B13; }
+    &.btn-med  { background: #FAEEDA; border-color: #BA7517 !important; color: #633806; }
+    &.btn-low  { background: #EAF3DE; border-color: #639922 !important; color: #27500A; }
+  }
+}

@@ -1,0 +1,10 @@
+<div class="metric">
+  <div class="metric-label">{{ label() }}</div>
+  <div class="metric-value">{{ value() }}</div>
+  
+  @if (trend()) {
+    <div class="metric-sub" [ngClass]="trendClass()">
+      {{ trend() }}
+    </div>
+  }
+</div>

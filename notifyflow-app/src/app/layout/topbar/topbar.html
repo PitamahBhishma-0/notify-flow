@@ -1,0 +1,28 @@
+<div class="topbar">
+  <div class="title-group">
+    <div class="topbar-title">{{ pageTitle() }}</div>
+    <div class="topbar-sub">{{ pageSub() }}</div>
+  </div>
+
+  <div class="topbar-actions">
+    <div class="api-status">
+      <span class="status-dot"></span>
+      API connected
+    </div>
+
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-btn">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+
+    <mat-menu #userMenu="matMenu" xPosition="before">
+      <div class="menu-header">
+        <p class="menu-name">Admin User</p>
+        <p class="menu-email">admin@notifyflow.io</p>
+      </div>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </div>
+</div>

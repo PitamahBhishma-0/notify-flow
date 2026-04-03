@@ -1,0 +1,54 @@
+<div class="metric-row">
+  <app-metric-card label="Total sent" value="2,418" trend="+12% today"></app-metric-card>
+  <app-metric-card label="Delivered" value="2,301" trend="95.2% rate"></app-metric-card>
+  <app-metric-card label="Failed" value="62" trend="2.6% rate"></app-metric-card>
+  <app-metric-card label="In queue" value="55" trend="processing"></app-metric-card>
+</div>
+
+<div class="card">
+  <div class="card-title">Compose notification</div>
+  
+  <form [formGroup]="sendForm" (ngSubmit)="dispatch()">
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Recipient user ID</mat-label>
+        <input matInput formControlName="recipientUserId" placeholder="usr_8f3k2...">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Channel</mat-label>
+        <mat-select formControlName="channel">
+          <mat-option value="Email">Email</mat-option>
+          <mat-option value="SMS">SMS</mat-option>
+          <mat-option value="In-app">In-app</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Subject / title</mat-label>
+      <input matInput formControlName="subject" placeholder="Your payment was received">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Message body</mat-label>
+      <textarea matInput formControlName="body" rows="3" placeholder="Hi there..."></textarea>
+    </mat-form-field>
+
+    <app-priority-btn
+      (priorityChange)="onPriorityChanged($event)">
+    </app-priority-btn>
+
+   <form [formGroup]="sendForm" (ngSubmit)="dispatch()">
+  
+  <button 
+    mat-flat-button 
+    color="primary" 
+    type="submit" 
+    class="send-btn"
+    [disabled]="sendForm.invalid || isSending()">
+    {{ isSending() ? 'Sending...' : 'Dispatch notification' }}
+  </button>
+</form>
+  </form>
+</div>

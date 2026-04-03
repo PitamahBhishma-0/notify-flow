@@ -1,0 +1,65 @@
+.metric-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  
+  &-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 18px;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Overriding Material Styles to match your minimalist look */
+::ng-deep {
+  .mat-mdc-form-field {
+    width: 100%;
+    margin-bottom: 8px;
+
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: var(--color-border-secondary) !important;
+    }
+
+    .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-text-field__input {
+      font-size: 13px;
+      color: var(--color-text-primary);
+    }
+  }
+
+  .mat-mdc-form-field-label {
+    font-size: 12px !important;
+    color: var(--color-text-secondary) !important;
+  }
+}
+
+.send-btn {
+  width: 100%;
+  margin-top: 20px;
+  height: 42px;
+  background-color: var(--brand-primary) !important;
+  color: white !important;
+  font-weight: 500;
+  border-radius: var(--border-radius-md) !important;
+
+  &:disabled {
+    opacity: 0.6;
+    background-color: var(--color-text-tertiary) !important;
+  }
+}

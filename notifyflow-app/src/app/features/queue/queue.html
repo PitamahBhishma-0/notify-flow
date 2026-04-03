@@ -1,0 +1,30 @@
+<div class="metric-row">
+  <app-metric-card label="Avg. Wait Time" value="1.2s" trend="Stable"></app-metric-card>
+  <app-metric-card label="Active Workers" value="8" trend="Max Capacity"></app-metric-card>
+</div>
+
+<div class="card">
+  <div class="card-title">Queue depth by priority</div>
+  
+  @for (item of priorityData(); track item.label) {
+    <app-bar-chart 
+      [label]="item.label" 
+      [value]="item.value" 
+      [maxValue]="maxPriority()"
+      [color]="item.color">
+    </app-bar-chart>
+  }
+</div>
+
+<div class="card">
+  <div class="card-title">Queue depth by Message Type</div>
+  
+  @for (item of messageTypeData(); track item.label) {
+    <app-bar-chart 
+      [label]="item.label" 
+      [value]="item.value" 
+      [maxValue]="maxMessageType()"
+      [color]="item.color">
+    </app-bar-chart>
+  }
+</div>

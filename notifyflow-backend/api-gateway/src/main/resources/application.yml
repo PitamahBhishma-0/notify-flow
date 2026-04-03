@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200, http://localhost:8080"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        - id: notification-service
+          uri: ${NOTIFICATION_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - StripPrefix=0
+
+        - id: user-service
+          uri: ${USER_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/users/**, /api/auth/**
+          filters:
+            - StripPrefix=0
+
+        - id: delivery-service
+          uri: ${DELIVERY_SERVICE_URL:http://localhost:8083}
+          predicates:
+            - Path=/api/delivery/**
+          filters:
+            - StripPrefix=0
+
+jwt:
+  secret: ${JWT_SECRET:notifyflow-super-secret-key-change-in-prod-min-32chars}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
