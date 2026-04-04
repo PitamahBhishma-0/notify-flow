@@ -40,10 +40,22 @@ jwt:
   secret: ${JWT_SECRET:notifyflow-super-secret-key-change-in-prod-min-32chars}
 
 management:
+  endpoint:
+    health:
+      show-details: always
+      status:
+        http-mapping:
+          down: 200
+          out-of-service: 200
+          unknown: 200
+      group:
+        custom:
+          include: "notification-service,user-service,delivery-service"
   endpoints:
     web:
       exposure:
         include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always
+      cors:
+          allowed-origins: "http://localhost:4200"
+          allowed-methods: "GET,POST"
+          allowed-headers: "*"

@@ -1,20 +1,41 @@
-import { Component, inject } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Router, NavigationEnd, RouterLink } from '@angular/router';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { filter, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
+
+// Material Imports
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+// Custom Services
+import { Monitoring } from '../../core/services/monitoring';
+
 @Component({
   selector: 'app-topbar',
-  imports: [MatButtonModule, MatIconModule, MatMenuModule],
+  standalone: true,
+  imports: [
+    CommonModule, 
+    MatButtonModule, 
+    MatIconModule, 
+    MatMenuModule, 
+    MatDividerModule,
+    MatTooltipModule
+  ],
   templateUrl: './topbar.html',
   styleUrl: './topbar.scss',
 })
 export default class Topbar {
-private router = inject(Router);
+  private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
+  private monitoring = inject(Monitoring);
 
-  // We convert the Router URL into a Signal that our template watches
+  // Link to the monitoring service signal
+  health = this.monitoring.health;
+
   pageTitle = toSignal(
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
@@ -30,20 +51,22 @@ private router = inject(Router);
   );
 
   private getTitle(url: string): string {
-    if (url.includes('status')) return 'Delivery status';
-    if (url.includes('queue')) return 'Queue stats';
-    if (url.includes('failed')) return 'Failed notifications';
-    return 'Send notification';
+    if (url.includes('status')) return 'Delivery Status';
+    if (url.includes('queue')) return 'Queue Stats';
+    if (url.includes('failed')) return 'Failed Notifications';
+    return 'Send Notification';
   }
 
   private getSub(url: string): string {
     if (url.includes('status')) return 'Real-time delivery log';
-    // ... add other cases
+    if (url.includes('queue')) return 'Monitor microservice throughput';
     return 'Compose and dispatch a new notification';
   }
 
   logout() {
-  localStorage.removeItem('notify_token');
-  this.router.navigate(['/login']);
-}
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('notify_token');
+    }
+    this.router.navigate(['/login']);
+  }
 }

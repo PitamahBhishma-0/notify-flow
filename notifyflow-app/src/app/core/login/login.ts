@@ -42,8 +42,17 @@ loginForm = this.fb.group({
       this.isLoading.set(true);
       this.errorMessage.set(null);
 
-      // Cast form values to our LoginRequest interface
+      
       const credentials = this.loginForm.value as LoginRequest;
+
+    //   if (credentials.email === 'admin@gmail.com') {
+    //   console.log('Admin login successful (mock)');
+    //   // Store mock token
+    //   localStorage.setItem('access_token', 'mock-admin-token');
+    //   this.router.navigate(['/send']);
+    //   this.isLoading.set(false);
+    //   return;
+    // }
 
       this.authService.login(credentials).subscribe({
         next: (res) => {

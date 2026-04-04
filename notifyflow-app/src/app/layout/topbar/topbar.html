@@ -5,24 +5,57 @@
   </div>
 
   <div class="topbar-actions">
-    <div class="api-status">
-      <span class="status-dot"></span>
-      API connected
+    <div class="api-status" [matMenuTriggerFor]="healthMenu" [class.degraded]="health().overall === 'DEGRADED'" [class.down]="health().overall === 'DOWN'">
+      <span class="status-dot" [class.pulse]="health().overall === 'UP'"></span>
+      <span class="status-label">
+        @if (health().overall === 'UP') { Systems Online }
+        @else if (health().overall === 'DEGRADED') { Partial Outage }
+        @else if (health().overall === 'DOWN') { Gateway Offline }
+        @else { Checking... }
+      </span>
+      <mat-icon class="expand-icon">expand_more</mat-icon>
     </div>
 
     <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-btn">
       <mat-icon>account_circle</mat-icon>
     </button>
-
-    <mat-menu #userMenu="matMenu" xPosition="before">
-      <div class="menu-header">
-        <p class="menu-name">Admin User</p>
-        <p class="menu-email">admin@notifyflow.io</p>
-      </div>
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        <span>Logout</span>
-      </button>
-    </mat-menu>
   </div>
 </div>
+
+<mat-menu #healthMenu="matMenu" class="health-detail-panel">
+  <div class="health-header">Microservices Status</div>
+  <mat-divider></mat-divider>
+  
+  <div mat-menu-item class="service-status-item">
+    <mat-icon [style.color]="health().services.notification ? '#10b981' : '#f44336'">
+      {{ health().services.notification ? 'check_circle' : 'cancel' }}
+    </mat-icon>
+    <span>Notification Service</span>
+  </div>
+
+  <div mat-menu-item class="service-status-item">
+    <mat-icon [style.color]="health().services.user ? '#10b981' : '#f44336'">
+      {{ health().services.user ? 'check_circle' : 'cancel' }}
+    </mat-icon>
+    <span>User Service</span>
+  </div>
+
+  <div mat-menu-item class="service-status-item">
+    <mat-icon [style.color]="health().services.delivery ? '#10b981' : '#f44336'">
+      {{ health().services.delivery ? 'check_circle' : 'cancel' }}
+    </mat-icon>
+    <span>Delivery Service</span>
+  </div>
+</mat-menu>
+
+<mat-menu #userMenu="matMenu" xPosition="before">
+  <div class="menu-header">
+    <p class="menu-name">Admin User</p>
+    <p class="menu-email">admin@notifyflow.io</p>
+  </div>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>Logout</span>
+  </button>
+</mat-menu>
