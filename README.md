@@ -1,4 +1,4 @@
-# NotifyFlow — Multi-Channel Notification Engine
+# NotifyFlow  Multi-Channel Notification Engine
 
 A production-grade, microservices-based notification delivery platform built with Java 21, Spring Boot 3, ActiveMQ, Redis, and Docker.
 
@@ -83,11 +83,11 @@ curl http://localhost:8080/api/notifications/{id} \
 
 ## Key Design Decisions
 
-- **Priority queues**: HIGH messages are consumed with 5–10 concurrent workers, LOW with 1–3 — ensuring critical notifications are never starved.
-- **Redis deduplication**: Each notification ID is stored with a 24h TTL — duplicate deliveries are impossible even under retry storms.
+- **Priority queues**: HIGH messages are consumed with 5–10 concurrent workers, LOW with 1–3  ensuring critical notifications are never starved.
+- **Redis deduplication**: Each notification ID is stored with a 24h TTL  duplicate deliveries are impossible even under retry storms.
 - **Rate limiting**: Max 10 notifications per user per channel per minute, enforced at the delivery layer.
 - **Retry with backoff**: Failed deliveries go to a retry queue, then DLQ after 1 attempts.
-- **Zero shared DB**: Each service owns its schema — true microservice independence.
+- **Zero shared DB**: Each service owns its schema  true microservice independence.
 
 
 ## Kubernetes (local demo)
