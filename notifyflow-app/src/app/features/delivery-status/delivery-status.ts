@@ -82,10 +82,16 @@ export default class DeliveryStatus {
 
   constructor() {
     this.loadMetrics();
+    this.loadChannelStats();
+    this.loadPriorityStats();
     // Poll every 15 seconds for real-time updates
     const subscription = interval(15000).pipe(
       startWith(0),
-      switchMap(() => this.fetchMetrics())
+      switchMap(() => {
+        this.loadChannelStats();
+        this.loadPriorityStats();
+        return this.fetchMetrics();
+      })
     ).subscribe();
 
     // Clean up subscription when component is destroyed
@@ -95,7 +101,12 @@ export default class DeliveryStatus {
   }
 
   private loadMetrics(): void {
-    this.fetchMetrics().subscribe();
+    this.fetchMetrics().subscribe({
+      next: (data) => {
+        this.metrics.set(data);
+        this.isLoading.set(false);
+      }
+    });
   }
 
   private fetchMetrics() {
@@ -110,6 +121,30 @@ export default class DeliveryStatus {
         return of(this.getMockMetrics());
       })
     );
+  }
+
+  private loadChannelStats(): void {
+    this.http.get<ChannelStats[]>('http://localhost:8080/api/delivery/metrics/channel').pipe(
+      catchError((error) => {
+        console.error('Failed to fetch channel stats:', error);
+        this.channelStats.set(this.getMockChannelStats());
+        return of(this.getMockChannelStats());
+      })
+    ).subscribe(stats => {
+      this.channelStats.set(stats);
+    });
+  }
+
+  private loadPriorityStats(): void {
+    this.http.get<PriorityStats[]>('http://localhost:8080/api/delivery/metrics/priority').pipe(
+      catchError((error) => {
+        console.error('Failed to fetch priority stats:', error);
+        this.priorityStats.set(this.getMockPriorityStats());
+        return of(this.getMockPriorityStats());
+      })
+    ).subscribe(stats => {
+      this.priorityStats.set(stats);
+    });
   }
 
   private getChannelValue(channel: 'EMAIL' | 'SMS' | 'IN_APP'): number {

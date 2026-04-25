@@ -5,6 +5,8 @@ import com.notifyflow.delivery.handler.EmailHandler;
 import com.notifyflow.delivery.handler.InAppHandler;
 import com.notifyflow.delivery.handler.SmsHandler;
 import com.notifyflow.delivery.service.DeduplicationService;
+import com.notifyflow.delivery.service.FailedNotificationService;
+import com.notifyflow.delivery.service.MetricsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
@@ -22,6 +24,8 @@ public class NotificationConsumer {
     private final SmsHandler smsHandler;
     private final InAppHandler inAppHandler;
     private final JmsTemplate jmsTemplate;
+    private final MetricsService metricsService;
+    private final FailedNotificationService failedNotificationService;
 
     @JmsListener(destination = "notify.queue.high", concurrency = "5-10")
     public void consumeHigh(NotificationMessage message) {
@@ -44,7 +48,11 @@ public class NotificationConsumer {
             if (deduplicationService.isRateLimited(
                     message.getRecipientUserId(),
                     String.valueOf(message.getChannel()))) return;
+
+            metricsService.recordSent(message.getChannel(), message.getPriority());
         }
+
+        long startTime = System.currentTimeMillis();
         try {
             switch (message.getChannel().name()) {
                 case "EMAIL"  -> emailHandler.send(message, message.getRecipientUserId());
@@ -52,8 +60,14 @@ public class NotificationConsumer {
                 case "IN_APP" -> inAppHandler.send(message);
                 default       -> log.warn("Unknown channel: {}", message.getChannel());
             }
+
+            long deliveryTime = System.currentTimeMillis() - startTime;
+            metricsService.recordDelivery(message.getChannel(), message.getPriority(), deliveryTime);
             log.info("Notification [{}] delivered via [{}]", message.getNotificationId(), message.getChannel());
         } catch (Exception e) {
+            long deliveryTime = System.currentTimeMillis() - startTime;
+            metricsService.recordFailure(message.getChannel(), message.getPriority(), e.getMessage());
+            failedNotificationService.recordFailed(message, e.getMessage());
             log.error("Delivery failed for [{}] (attempt {}): {}",
                     message.getNotificationId(), message.getRetryCount() + 1, e.getMessage());
             jmsTemplate.convertAndSend("notify.queue.retry", message);

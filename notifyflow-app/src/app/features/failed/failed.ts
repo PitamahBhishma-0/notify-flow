@@ -8,14 +8,16 @@ import { HttpClient } from '@angular/common/http';
 import { interval, startWith, switchMap, catchError, of } from 'rxjs';
 
 export interface FailedDelivery {
-  id: string;
+  notificationId: string;
   recipientUserId: string;
   channel: 'EMAIL' | 'SMS' | 'IN_APP';
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
   subject: string;
-  failureReason: string;
+  body: string;
+  errorMessage: string;
   retryCount: number;
-  lastAttempt: string;
-  status: 'FAILED' | 'RETRYING' | 'DLQ';
+  failedAt: string;
+  reprocessed: boolean;
 }
 
 @Component({
@@ -36,7 +38,7 @@ export default class Failed {
   private destroyRef = inject(DestroyRef);
   private readonly API_URL = 'http://localhost:8080/api/delivery/failed';
 
-  displayedColumns: string[] = ['id', 'recipient', 'channel', 'subject', 'reason', 'retries', 'lastAttempt', 'actions'];
+  displayedColumns: string[] = ['notificationId', 'recipient', 'channel', 'priority', 'subject', 'error', 'retries', 'failedAt'];
   failedDeliveries = signal<FailedDelivery[]>([]);
   isLoading = signal(true);
   totalFailed = signal(0);
@@ -56,7 +58,13 @@ export default class Failed {
   }
 
   private loadFailedDeliveries(): void {
-    this.fetchFailedDeliveries().subscribe();
+    this.fetchFailedDeliveries().subscribe({
+      next: (data) => {
+        this.failedDeliveries.set(data);
+        this.totalFailed.set(data.length);
+        this.isLoading.set(false);
+      }
+    });
   }
 
   private fetchFailedDeliveries() {
@@ -70,6 +78,47 @@ export default class Failed {
         return of(this.getMockData());
       })
     );
+  }
+
+  private getMockData(): FailedDelivery[] {
+    return [
+      {
+        notificationId: 'notif_8f3k2x9m',
+        recipientUserId: 'usr_abc123',
+        channel: 'EMAIL',
+        priority: 'HIGH',
+        subject: 'Payment confirmation',
+        body: 'Your payment has been received.',
+        errorMessage: 'SMTP connection timeout',
+        retryCount: 3,
+        failedAt: '2024-01-15T14:30:00',
+        reprocessed: false
+      },
+      {
+        notificationId: 'notif_9j4l3y0n',
+        recipientUserId: 'usr_def456',
+        channel: 'SMS',
+        priority: 'MEDIUM',
+        subject: 'OTP verification',
+        body: 'Your OTP is 123456',
+        errorMessage: 'Invalid phone number format',
+        retryCount: 1,
+        failedAt: '2024-01-15T14:25:00',
+        reprocessed: true
+      },
+      {
+        notificationId: 'notif_0k5m4z1o',
+        recipientUserId: 'usr_ghi789',
+        channel: 'IN_APP',
+        priority: 'LOW',
+        subject: 'New message alert',
+        body: 'You have a new message',
+        errorMessage: 'User not found',
+        retryCount: 2,
+        failedAt: '2024-01-15T14:20:00',
+        reprocessed: false
+      }
+    ];
   }
 
   retryDelivery(id: string): void {
@@ -112,38 +161,17 @@ export default class Failed {
     }
   }
 
-  private getMockData(): FailedDelivery[] {
-    return [
-      {
-        id: 'notif_8f3k2x9m',
-        recipientUserId: 'usr_abc123',
-        channel: 'EMAIL',
-        subject: 'Payment confirmation',
-        failureReason: 'SMTP connection timeout',
-        retryCount: 3,
-        lastAttempt: '2024-01-15T14:30:00Z',
-        status: 'FAILED'
-      },
-      {
-        id: 'notif_9j4l3y0n',
-        recipientUserId: 'usr_def456',
-        channel: 'SMS',
-        subject: 'OTP verification',
-        failureReason: 'Invalid phone number format',
-        retryCount: 1,
-        lastAttempt: '2024-01-15T14:25:00Z',
-        status: 'DLQ'
-      },
-      {
-        id: 'notif_0k5m4z1o',
-        recipientUserId: 'usr_ghi789',
-        channel: 'IN_APP',
-        subject: 'New message alert',
-        failureReason: 'User not found',
-        retryCount: 2,
-        lastAttempt: '2024-01-15T14:20:00Z',
-        status: 'RETRYING'
-      }
-    ];
+  getPriorityClass(priority: string): string {
+    switch (priority) {
+      case 'HIGH': return 'priority-high';
+      case 'MEDIUM': return 'priority-medium';
+      case 'LOW': return 'priority-low';
+      default: return '';
+    }
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleString();
   }
 }

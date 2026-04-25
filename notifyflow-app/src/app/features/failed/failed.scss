@@ -90,6 +90,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+  .error-cell {
+    color: var(--color-error);
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .channel-badge {
@@ -118,6 +126,29 @@
   }
 
   &.channel-inapp {
+    background-color: rgba(99, 153, 34, 0.1);
+    color: #639922;
+  }
+}
+
+.priority-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+
+  &.priority-high {
+    background-color: rgba(216, 90, 48, 0.1);
+    color: #D85A30;
+  }
+
+  &.priority-medium {
+    background-color: rgba(186, 117, 23, 0.1);
+    color: #BA7517;
+  }
+
+  &.priority-low {
     background-color: rgba(99, 153, 34, 0.1);
     color: #639922;
   }

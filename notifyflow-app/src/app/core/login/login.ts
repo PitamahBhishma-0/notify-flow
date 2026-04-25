@@ -49,13 +49,12 @@ export default class Login {
 
       
       const credentials = this.loginForm.value as LoginRequest;
- // Special check for user h@h.com
-    if (credentials.email === 'h@h.com') {
-      console.log('Test user detected. Bypassing login...');
-      localStorage.setItem('notify_token', "dgsudhjshdsj");
-      this.router.navigate(['/send']);
-      return; // Stop here so it doesn't call this.authService.login
-    }
+    // if (credentials.email === 'h@h.com') {
+    //   console.log('Test user detected. Bypassing login...');
+    //   localStorage.setItem('notify_token', "dgsudhjshdsj");
+    //   this.router.navigate(['/send']);
+    //   return;
+    // }
       this.authService.login(credentials).subscribe({
         next: (res) => {
           console.log('Login Successful, token stored.');
