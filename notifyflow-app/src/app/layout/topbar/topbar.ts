@@ -1,4 +1,4 @@
-import { Component, inject, PLATFORM_ID } from '@angular/core';
+import { Component, inject, PLATFORM_ID, DestroyRef } from '@angular/core';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { filter, map } from 'rxjs/operators';
@@ -32,6 +32,7 @@ export default class Topbar {
   private router = inject(Router);
   private platformId = inject(PLATFORM_ID);
   private monitoring = inject(Monitoring);
+  private destroyRef = inject(DestroyRef);
 
   // Link to the monitoring service signal
   health = this.monitoring.health;
@@ -49,6 +50,11 @@ export default class Topbar {
       map(() => this.getSub(this.router.url))
     ), { initialValue: 'Compose and dispatch a new notification' }
   );
+
+  constructor() {
+    // Start monitoring polling when topbar is created
+    this.monitoring.startPolling(this.destroyRef);
+  }
 
   private getTitle(url: string): string {
     if (url.includes('status')) return 'Delivery Status';
