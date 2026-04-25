@@ -39,16 +39,13 @@
       (priorityChange)="onPriorityChanged($event)">
     </app-priority-btn>
 
-   <form [formGroup]="sendForm" (ngSubmit)="dispatch()">
-  
-  <button 
-    mat-flat-button 
-    color="primary" 
-    type="submit" 
+    <button
+    mat-flat-button
+    color="primary"
+    type="submit"
     class="send-btn"
     [disabled]="sendForm.invalid || isSending()">
     {{ isSending() ? 'Sending...' : 'Dispatch notification' }}
   </button>
-</form>
   </form>
 </div>

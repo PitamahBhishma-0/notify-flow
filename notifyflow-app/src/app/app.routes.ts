@@ -3,6 +3,7 @@ import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./core/login/login') },
+  { path: 'register', loadComponent: () => import('./core/register/register') },
   {
     path: '',
     canActivate: [authGuard],

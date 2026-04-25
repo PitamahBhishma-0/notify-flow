@@ -1,0 +1,67 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <div class="register-header">
+      <div class="logo">NotifyFlow<span>v1.0.0</span></div>
+      <h1>Create account</h1>
+      <p>Join NotifyFlow to manage your notifications</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Full name</mat-label>
+        <input matInput formControlName="name" type="text" placeholder="John Doe">
+        <mat-icon matSuffix>person</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email address</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="name@company.com">
+        <mat-icon matSuffix>email</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'">
+        <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm password</mat-label>
+        <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'">
+        <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+          <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      @if (registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched) {
+        <div class="error-banner">
+          Passwords do not match
+        </div>
+      }
+
+      @if (errorMessage()) {
+        <div class="error-banner">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      @if (successMessage()) {
+        <div class="success-banner">
+          {{ successMessage() }}
+        </div>
+      }
+
+      <button mat-flat-button color="primary" type="submit"
+              [disabled]="registerForm.invalid || isLoading()">
+        {{ isLoading() ? 'Creating account...' : 'Create account' }}
+      </button>
+    </form>
+
+    <div class="register-footer">
+      <span>Already have an account?</span>
+      <a (click)="goToLogin()">Sign in</a>
+    </div>
+  </mat-card>
+</div>

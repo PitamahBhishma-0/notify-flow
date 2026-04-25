@@ -1,1 +1,56 @@
-<p>delivery-status works!</p>
+<div class="delivery-status-container">
+  <div class="metric-row">
+    <app-metric-card label="Total sent" [value]="totalSentDisplay()" trend="+12% today"></app-metric-card>
+    <app-metric-card label="Delivered" [value]="deliveredDisplay()" [trend]="successRateDisplay() + ' rate'"></app-metric-card>
+    <app-metric-card label="Failed" [value]="failedDisplay()" [trend]="(metrics().failed / metrics().totalSent * 100).toFixed(1) + '% rate'"></app-metric-card>
+    <app-metric-card label="In queue" [value]="inQueueDisplay()" trend="processing"></app-metric-card>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="card">
+      <div class="card-title">Delivery by Channel</div>
+      @for (item of channelData(); track item.label) {
+        <app-bar-chart
+          [label]="item.label"
+          [value]="item.value"
+          [maxValue]="maxChannel()"
+          [color]="item.color">
+        </app-bar-chart>
+      }
+    </div>
+
+    <div class="card">
+      <div class="card-title">Delivery by Priority</div>
+      @for (item of priorityData(); track item.label) {
+        <app-bar-chart
+          [label]="item.label"
+          [value]="item.value"
+          [maxValue]="maxPriority()"
+          [color]="item.color">
+        </app-bar-chart>
+      }
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Performance Metrics</div>
+    <div class="performance-grid">
+      <div class="performance-item">
+        <span class="performance-label">Average Delivery Time</span>
+        <span class="performance-value">{{ avgTimeDisplay() }}</span>
+      </div>
+      <div class="performance-item">
+        <span class="performance-label">Success Rate</span>
+        <span class="performance-value success">{{ successRateDisplay() }}</span>
+      </div>
+      <div class="performance-item">
+        <span class="performance-label">Failure Rate</span>
+        <span class="performance-value error">{{ (metrics().failed / metrics().totalSent * 100).toFixed(1) }}%</span>
+      </div>
+      <div class="performance-item">
+        <span class="performance-label">Queue Depth</span>
+        <span class="performance-value">{{ inQueueDisplay() }}</span>
+      </div>
+    </div>
+  </div>
+</div>

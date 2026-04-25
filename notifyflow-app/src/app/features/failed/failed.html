@@ -1,1 +1,111 @@
-<p>failed works!</p>
+<div class="failed-container">
+  <div class="header">
+    <h2>Failed Deliveries</h2>
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-label">Total Failed</span>
+        <span class="stat-value">{{ totalFailed() }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Auto-retrying</span>
+        <span class="stat-value">{{ failedDeliveries().filter(d => d.status === 'RETRYING').length }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">In DLQ</span>
+        <span class="stat-value">{{ failedDeliveries().filter(d => d.status === 'DLQ').length }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container" *ngIf="!isLoading(); else loadingTemplate">
+    <table mat-table [dataSource]="failedDeliveries()" class="failed-table">
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let element" class="id-cell">{{ element.id }}</td>
+      </ng-container>
+
+      <!-- Recipient Column -->
+      <ng-container matColumnDef="recipient">
+        <th mat-header-cell *matHeaderCellDef>Recipient</th>
+        <td mat-cell *matCellDef="let element">{{ element.recipientUserId }}</td>
+      </ng-container>
+
+      <!-- Channel Column -->
+      <ng-container matColumnDef="channel">
+        <th mat-header-cell *matHeaderCellDef>Channel</th>
+        <td mat-cell *matCellDef="let element">
+          <span class="channel-badge {{ getChannelClass(element.channel) }}">
+            <mat-icon>{{ getChannelIcon(element.channel) }}</mat-icon>
+            {{ element.channel }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Subject Column -->
+      <ng-container matColumnDef="subject">
+        <th mat-header-cell *matHeaderCellDef>Subject</th>
+        <td mat-cell *matCellDef="let element" class="subject-cell">{{ element.subject }}</td>
+      </ng-container>
+
+      <!-- Reason Column -->
+      <ng-container matColumnDef="reason">
+        <th mat-header-cell *matHeaderCellDef>Failure Reason</th>
+        <td mat-cell *matCellDef="let element" class="reason-cell">{{ element.failureReason }}</td>
+      </ng-container>
+
+      <!-- Retries Column -->
+      <ng-container matColumnDef="retries">
+        <th mat-header-cell *matHeaderCellDef>Retries</th>
+        <td mat-cell *matCellDef="let element">
+          <span class="retry-badge" [class.warning]="element.retryCount >= 2">
+            {{ element.retryCount }}/3
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Last Attempt Column -->
+      <ng-container matColumnDef="lastAttempt">
+        <th mat-header-cell *matHeaderCellDef>Last Attempt</th>
+        <td mat-cell *matCellDef="let element">{{ element.lastAttempt | date:'short' }}</td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let element">
+          <button
+            mat-icon-button
+            matTooltip="Retry delivery"
+            (click)="retryDelivery(element.id)"
+            [disabled]="element.status === 'RETRYING'">
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            matTooltip="Move to DLQ"
+            (click)="moveToDlq(element.id)"
+            [disabled]="element.status === 'DLQ'">
+            <mat-icon>archive</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div class="empty-state" *ngIf="failedDeliveries().length === 0">
+      <mat-icon class="empty-icon">check_circle</mat-icon>
+      <p>No failed deliveries</p>
+      <span class="empty-subtitle">All notifications are being delivered successfully</span>
+    </div>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-state">
+      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+      <p>Loading failed deliveries...</p>
+    </div>
+  </ng-template>
+</div>
